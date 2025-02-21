@@ -1,6 +1,6 @@
 MAS forest {
 
-    environment: csck504.ForestEnv(0)
+    environment: csck504.ForestEnv(3)
 
     agents: hero; goblin;
 

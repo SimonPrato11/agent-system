@@ -14,20 +14,28 @@ visited(0,0).
 
 /* Plans */
 
-// In the event that the agent started
-// Under all circumstances
-// Start searching
+/* Starting plan*/
 +!started 
    :true
    <- .print("I'm not scared of that smelly Goblin!").
       !search_items(slots). 
 
+
+/* Search for items */
+
 // In the event that the agent is searching
 // And have all the three items
 // Find the goblin
-+!search_items(slots) : hero(coin) & hero(gem) & hero(vase) <-
-    .print("I have all items! Looking for the goblin now.");
++!search_items(slots) : hero(coin) & hero(gem) & hero(vase) 
+   <- .print("I have all items! Looking for the goblin now.");
     !find_goblin.
+
+// Last position
++!search_items(slots) : pos(hero,7,7)
+  <- !check_last_position.
+
+
+/* Items colleciton during search */
 
 // In the event that the agent is searching
 // And there is an item (gem, coin or vase)
@@ -44,33 +52,62 @@ visited(0,0).
  <- .print("Found vase!");
       !ensurePick(vase).
 
+
+/* Continue searching */
+
 // In the event that the agent is searching
-// And is not at the end of the forest
+// And is not at the last position
 // Keep searching
-+!search_items(slots) : not pos(hero,7,7)
++!search_items(slots)
  <-  next(slot);
        !search_items(slots).
 
-// In the event that the agent is searching
-// And is at the end of the forest and there is an item
-// Count items
-+!search_items(slots) : pos(hero,7,7) & hero(gem)
-      <- pick(gem);
-!count_items.
 
-+!search_items(slots) : pos(hero,7,7) & hero(coin)
+
+/* Check last position (7,7) */
+
++!check_last_position : gem(hero)
+   <- pick(gem);
+      !count_items.
+
++!check_last_position
+   : coin(hero)
    <- pick(coin);
- !count_items.
+      !count_items.
 
-+!search_items(slots) : pos(hero,7,7) & hero(vase)
-  <- pick(vase);
- !count_items.
++!check_last_position
+   : vase(hero)
+   <- pick(vase);
+      !count_items.
+
++!check_last_position
+   <- .print("We didn’t find all the items. Leaving the forest...").
+
+
+// REPLACED
+// // In the event that the agent is searching
+// // And is at the end of the forest and there is an item
+// // Count items
+// +!search_items(slots) : pos(hero,7,7) & hero(gem)
+//       <- pick(gem);
+// !count_items.
+
+// +!search_items(slots) : pos(hero,7,7) & hero(coin)
+//    <- pick(coin);
+//  !count_items.
+
+// +!search_items(slots) : pos(hero,7,7) & hero(vase)
+//   <- pick(vase);
+//  !count_items.
        
-// In the event that the agent is searching
-// And is at the end of the forest
-//Leave the forest
-+!search_items(slots) : pos(hero,7,7)
- <- .print("We did't find all the items. Leaving the forest...").
+// // In the event that the agent is searching
+// // And is at the end of the forest
+// //Leave the forest
+// +!search_items(slots) : pos(hero,7,7)
+//  <- .print("We did't find all the items. Leaving the forest...").
+// REPLACED
+
+/* Ensure pick items */
 
  //In the event that I want to pick an item
  // And don't have that item
@@ -81,6 +118,8 @@ visited(0,0).
    !search_items(slots).
 
 +!ensurePick(_).
+
+/* Count items */
 
 // In the event that is counting the items
 // And have them all 
@@ -95,6 +134,7 @@ visited(0,0).
  +!count_items: true
   <- .print("We did't find all the items. Leaving the forest...").
 
+/* Find goblin */
 
 // Find the goblin
 // Drop the items if at goblin's 
@@ -107,6 +147,8 @@ visited(0,0).
     .print("Moving towards goblin at position", X, ",", Y);
     move_towards(GX,GY);
     !find_goblin.
+
+/* Drop items to goblin */
 
 // Drop the items at at goblin's location
 +!drop_items : true <-
