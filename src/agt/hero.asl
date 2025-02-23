@@ -1,45 +1,41 @@
-//STUDENT NAME:
-//STUDENT ID:
+//STUDENT NAME: Simon Prato
+//STUDENT ID: 20005201
 
 
-/*  Rules */
+// Rules
 //Hero is at the position of agent P (variable), if agent P's position is identical to Hero's position 
 at(P) :- pos(P,X,Y) & pos(hero,X,Y).
 
-/*  Initial beliefs */
-visited(0,0).
-
-/*  Initial goal */
+// Initial goal */
 !started.
 
-/* Plans */
+ // Plans
 
-/* Starting plan*/
+ // Starting plan*/
 +!started 
    :true
    <- .print("I'm not scared of that smelly Goblin!").
       !search_items(slots). 
 
 
-/* Search for items */
+// Search for items:
 
-// In the event that the agent is searching
-// And have all the three items
+// In the event that the hero is searching
+// And it has the three items
 // Find the goblin
 +!search_items(slots) : hero(coin) & hero(gem) & hero(vase) 
    <- .print("I have all items! Looking for the goblin now.");
     !find_goblin.
 
-// Last position
+// In the event that the hero is searching
+// And it is at last position (7,7)
+// Check last position
 +!search_items(slots) : pos(hero,7,7)
   <- !check_last_position.
 
-
-/* Items colleciton during search */
-
-// In the event that the agent is searching
+// In the event that the hero is searching
 // And there is an item (gem, coin or vase)
-// Pick the item
+// Ensure pick the item
 +!search_items(slots) : gem(hero) 
  <- .print("Found gem!");
        !ensurePick(gem).
@@ -52,105 +48,94 @@ visited(0,0).
  <- .print("Found vase!");
       !ensurePick(vase).
 
-
-/* Continue searching */
-
-// In the event that the agent is searching
+// In the event that the hero is searching
 // And is not at the last position
 // Keep searching
 +!search_items(slots)
  <-  next(slot);
        !search_items(slots).
 
+// Check last position: 
 
+// In the event that the hero is checking the last position
+// And there is an item
+// Count the items
 
-/* Check last position (7,7) */
-
+// There is a gem
 +!check_last_position : gem(hero)
    <- pick(gem);
       !count_items.
 
-+!check_last_position
-   : coin(hero)
+// There is a coin
++!check_last_position : coin(hero)
    <- pick(coin);
       !count_items.
 
-+!check_last_position
-   : vase(hero)
+// There is a vase
++!check_last_position : vase(hero)
    <- pick(vase);
       !count_items.
 
 +!check_last_position
    <- .print("We didn’t find all the items. Leaving the forest...").
 
+// Ensure pick items:
 
-// REPLACED
-// // In the event that the agent is searching
-// // And is at the end of the forest and there is an item
-// // Count items
-// +!search_items(slots) : pos(hero,7,7) & hero(gem)
-//       <- pick(gem);
-// !count_items.
-
-// +!search_items(slots) : pos(hero,7,7) & hero(coin)
-//    <- pick(coin);
-//  !count_items.
-
-// +!search_items(slots) : pos(hero,7,7) & hero(vase)
-//   <- pick(vase);
-//  !count_items.
-       
-// // In the event that the agent is searching
-// // And is at the end of the forest
-// //Leave the forest
-// +!search_items(slots) : pos(hero,7,7)
-//  <- .print("We did't find all the items. Leaving the forest...").
-// REPLACED
-
-/* Ensure pick items */
-
- //In the event that I want to pick an item
- // And don't have that item
- // Pick it and keep searching
+// In the event that the hero want to pick an item
+// And it does not have that item
+// Pick the item
+// Keep searching
  +!ensurePick(Item) : not hero(Item)
    <-  pick(Item);
-   !ensurePick(Item);
    !search_items(slots).
 
-+!ensurePick(_).
+// In the event that the hero want to pick an item
+// And already has that item
+// Move to next slot
+// Keep searching
+ +!ensurePick(Item) : hero(Item)
+    <- .print("We don't need this item!");
+        next(slot);
+       !search_items(slots).
+   
+// Count items in the event that the hero is at the last position (7,7):
 
-/* Count items */
-
-// In the event that is counting the items
-// And have them all 
+// In the event the hero is counting the items
+// And it has them all 
 // Find the goblin
 +!count_items: hero(coin) & hero(gem) & hero(vase)
  <- .print("We have all thge items!");
  !find_goblin.
 
-// In the event that is counting the items
-// And don't have them all 
+// In the event the hero is counting the items
+// And it does't have them all 
 // Leave the forest
  +!count_items: true
   <- .print("We did't find all the items. Leaving the forest...").
 
-/* Find goblin */
+// Find goblin:
 
-// Find the goblin
-// Drop the items if at goblin's 
-// Keep moving if not
+// In the event the hero is finding the gobling
+// And it is at the same position
+// Drop the items
 +!find_goblin : at(goblin) <-
     .print("Found the goblin! Dropping items...");
     !drop_items.
 
+// In the event the hero is finding the gobling
+// And it is not at the same position
+// Move towards the goblin's position
 +!find_goblin : pos(goblin,GX,GY) <-
     .print("Moving towards goblin at position", X, ",", Y);
     move_towards(GX,GY);
     !find_goblin.
 
-/* Drop items to goblin */
+// Drop items to at the goblin:
 
-// Drop the items at at goblin's location
+// In the event the hero is dropiing the items
+// Under all circunstances
+// Drop all the items 
+// Move towards the end of the forest (7,7)
 +!drop_items : true <-
     .print("Dropping the items");
     !drop_gem;
@@ -159,17 +144,41 @@ visited(0,0).
     move_towards(7,7);
     .print("All items dropped. Leaving the forest!").
 
-// Plan to drop gem
+// Drop gem
 +!drop_gem : hero(gem) <-
     .print("Dropping gem");
     drop(gem).
 
-// Plan to drop coin
+// Drop coin
 +!drop_coin : hero(coin) <-
     .print("Dropping coin");
     drop(coin).
 
-// Plan to drop vase
+// Drop vase
 +!drop_vase : hero(vase) <-
     .print("Dropping vase");
     drop(vase).
+
+    
+
+// Plan to deal with teleporter:
+
+// Initial beliefs */
+// last_known_x_position(0,0).
+// initial_position(0,0).
+
+// Plan */
+// +!update_last_position 
+//    : pos(hero, X, Y) 
+//    <- ?last_known_x_position(OldX,OldY);    // Query current last known position
+//       -last_known_x_position(OldX,OldY);    // Remove old belief
+//       +last_known_x_position(X,Y);          // Add new belief
+//       .print("Updated last position to ", X).
+
+// Plan excecution:
+// Hero is at initial_position ? keep going : 
+// check if last_known_x_position == last_known_x_position + 1 ?
+// !update_last_position and keep going : 
+//  update last position to last position + 1 and move to last position + 2 (to avoid teleporter again)
+
+

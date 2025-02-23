@@ -47,3 +47,10 @@ Tips:
 Your hero agent should do as is described above. A basic implementation would be expected to collect the three items (if present) and drop them at the goblin.
 
 More advanced implementations would deal with the teleporter and deal with multiple objects. It is important that the agent acts rationally in all situations, so consider carefully how you make your agent behave in different situations – use your understanding of what it means for an agent to be rational in its actions and allow this to inform your agent's actions.
+
+TODO:
+Copment the plan for teletransportation (SUDO CODE)
+Update comments
+Do video (mention that hero dont pick items twice)
+
+-
