@@ -180,17 +180,18 @@ at(P) :- pos(P,X,Y) & pos(hero,X,Y).
 // last_known_x_position(0,0).
 
 // Plan */
+// : pos(hero, X) & last_known_x_position(LastX, _) & X == LastX + 1
+//
 // +!update_last_position 
 //    : pos(hero, X, Y) 
 //    <- ?last_known_x_position(OldX,OldY);    // Query current last known position
 //       -last_known_x_position(OldX,OldY);    // Remove old belief
 //       +last_known_x_position(X,Y);          // Add new belief
-//       .print("Updated last position to ", X).
 
 // Plan excecution:
 // Hero is at initial_position (pos(hero,0,0) ? keep going : 
-// check if last_known_x_position == last_known_x_position + 1 ?
-// !update_last_position and keep going : 
+// check if pos(hero,x)  ==  last_known_x_position + 1 ?
+// !update_last_x_position and keep going : 
 //  update last position to last position + 1 and move to last position + 2 (to avoid teleporter again)
 
 
