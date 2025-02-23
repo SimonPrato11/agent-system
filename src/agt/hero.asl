@@ -104,7 +104,7 @@ at(P) :- pos(P,X,Y) & pos(hero,X,Y).
 // And it has them all 
 // Find the goblin
 +!count_items: hero(coin) & hero(gem) & hero(vase)
- <- .print("We have all thge items!");
+ <- .print("We have all the items!");
  !find_goblin.
 
 // In the event the hero is counting the items
@@ -135,14 +135,14 @@ at(P) :- pos(P,X,Y) & pos(hero,X,Y).
 // In the event the hero is dropiing the items
 // Under all circunstances
 // Drop all the items 
-// Move towards the end of the forest (7,7)
+// Leave the forest
 +!drop_items : true <-
     .print("Dropping the items");
     !drop_gem;
     !drop_coin;
     !drop_vase;
-    move_towards(7,7);
-    .print("All items dropped. Leaving the forest!").
+    .print("All items dropped!");
+    !leave_forest.
 
 // Drop gem
 +!drop_gem : hero(gem) <-
@@ -159,13 +159,25 @@ at(P) :- pos(P,X,Y) & pos(hero,X,Y).
     .print("Dropping vase");
     drop(vase).
 
-    
+// In the event the is leaving the forest
+// And it is at last position (7,7)
+// Print leaving the forest
++!leave_forest : pos(hero,7,7)
+  <-  .print("Leaving the forest...").
+
+// In the event the is leaving the forest
+// And it is not at last position (7,7)
+// Move towards 7,7
+// Leave the forest
++!leave_forest : true
+   <- move_towards(7,7);
+   !leave_forest;
+   .print("Moving towads the exit...");.
 
 // Plan to deal with teleporter:
 
 // Initial beliefs */
 // last_known_x_position(0,0).
-// initial_position(0,0).
 
 // Plan */
 // +!update_last_position 
@@ -176,7 +188,7 @@ at(P) :- pos(P,X,Y) & pos(hero,X,Y).
 //       .print("Updated last position to ", X).
 
 // Plan excecution:
-// Hero is at initial_position ? keep going : 
+// Hero is at initial_position (pos(hero,0,0) ? keep going : 
 // check if last_known_x_position == last_known_x_position + 1 ?
 // !update_last_position and keep going : 
 //  update last position to last position + 1 and move to last position + 2 (to avoid teleporter again)

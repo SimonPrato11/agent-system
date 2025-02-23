@@ -110,6 +110,9 @@ public class ForestEnv extends Environment {
         
         updatePercepts();
 
+        // Ensure env update on next(slot)
+        view.repaint();
+
         try {
             Thread.sleep(200);
         } catch (Exception e) {}
