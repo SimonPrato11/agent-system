@@ -1,7 +1,3 @@
-//STUDENT NAME: Simon Prato
-//STUDENT ID: 20005201
-
-
 // Rules
 //Hero is at the position of agent P (variable), if agent P's position is identical to Hero's position 
 at(P) :- pos(P,X,Y) & pos(hero,X,Y).
